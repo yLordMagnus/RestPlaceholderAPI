@@ -6,15 +6,22 @@ import spark.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import static spark.Service.ignite;
 
 class SparkWrapper {
     Service http;
 
-    void create(int port, List<String> tokens) {
+    void create(int port, List<String> tokedens) {
         http = ignite().port(port);
         http.get("/:uuid/:placeholder", (request, response) -> {
+
+            Bukkit.getLogger().log(Level.SEVERE, "Usando versão insegura TOKEN DESATIVADA!");
+            Bukkit.getLogger().log(Level.SEVERE, "Token recebida: " + request.headers("token"));
+            /*
+            // Add back later
+            // Avoid someone spamming PlaceholderAPI requests.
 
             if (request.headers("token") == null) {
                 response.type("application/json");
@@ -25,6 +32,7 @@ class SparkWrapper {
                 response.status(401);
                 return "{\"status\":\"401\",\"message\":\"Unauthorized\"}";
             } else {
+             */
                 response.type("application/json");
                 UUID specifiedUUID;
                 try {
@@ -40,9 +48,14 @@ class SparkWrapper {
                     response.type("application/json");
                     response.status(200);
 
-                    String Placeholder = "{\"status\":\"200\",\"message\":\"" + PlaceholderAPI.setPlaceholders(Bukkit.getOfflinePlayer(UUID.fromString(request.params(":uuid"))), "%" + request.params(":placeholder") + "%") + "\"}";
+                    String placeholderResult =  PlaceholderAPI.setPlaceholders(
+                            Bukkit.getOfflinePlayer(UUID.fromString(request.params(":uuid"))),
+                            "%" + request.params(":placeholder") + "%"
+                    );
 
-                    if (Placeholder.equals("%" + request.params(":placeholder") + "%")) {
+                    String placeholder = "{\"status\":\"200\",\"message\":\"" + placeholderResult + "\"}";
+
+                    if (placeholderResult.equals("%" + request.params(":placeholder") + "%")) {
 
                         response.type("application/json");
                         response.status(406);
@@ -50,7 +63,7 @@ class SparkWrapper {
 
                     } else {
 
-                        return Placeholder;
+                        return placeholder;
 
                     }
                 } else {
@@ -60,7 +73,7 @@ class SparkWrapper {
                     return "{\"status\":\"400\",\"message\":\"Player Has Not Played Before\"}";
 
                 }
-            }
+            //}
 
         });
         http.get("/*", (request, response) -> {
@@ -95,6 +108,7 @@ class SparkWrapper {
 
     void destroy() {
         http.stop();
+        Bukkit.getLogger().log(Level.WARNING, "[RestPAPI] Disabled Webserver");
     }
 
 }

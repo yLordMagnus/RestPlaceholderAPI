@@ -1,14 +1,9 @@
 package me.fredthedoggy.restpapi;
 
 import com.heretere.hdl.dependency.maven.annotation.MavenDependency;
-import com.heretere.hdl.exception.DependencyLoadException;
 import com.heretere.hdl.relocation.annotation.Relocation;
-import com.heretere.hdl.spigot.DependencyPlugin;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
+import org.bukkit.plugin.java.JavaPlugin;
 
 @MavenDependency("org|eclipse|jetty:jetty-servlet:9.4.31.v20200723")
 @MavenDependency("org|eclipse|jetty:jetty-io:9.4.31.v20200723")
@@ -31,37 +26,24 @@ import java.util.Set;
 @MavenDependency("org|eclipse|jetty|websocket:websocket-servlet:9.4.31.v20200723")
 @MavenDependency("org|eclipse|jetty|websocket:websocket-client:9.4.31.v20200723")
 @MavenDependency("javax|servlet:javax|servlet-api:3.1.0")
-//relocate 'org.bstats', 'me.fredthedoggy.restpapi'
 @Relocation(from = "org|bstats", to = "me|fredthedoggy|restpapi")
-public final class Restpapi extends DependencyPlugin {
+public final class Restpapi extends JavaPlugin {
 
     private RestPapiLoader loader;
     FileConfiguration config = getConfig();
     SparkWrapper webServer;
 
-    @Override protected void fail(
-            @NotNull Set<@NotNull Throwable> genericErrors,
-            @NotNull Set<@NotNull DependencyLoadException> dependencyErrors
-    ) {
-
-    }
-
-    @Override protected void load() {
-
-    }
-
     @Override
-    public void enable() {
-        Metrics metrics = new Metrics(this, 10708);
-
+    public void onEnable() {
         this.loader = new RestPapiLoader(this);
         this.loader.enable();
     }
 
     @Override
-    public void disable() {
+    public void onDisable() {
         this.loader.disable();
     }
+
 
     public RestPapiLoader getLoader() {
         return loader;

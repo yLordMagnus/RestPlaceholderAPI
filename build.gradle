@@ -1,7 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java'
 }
 
@@ -9,10 +9,24 @@ sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding 'UTF-8'
 
 group 'me.fredthedoggy'
-version '1.0.4'
+version '1.0.5'
+
+allprojects {
+    apply plugin: 'java'
+
+    tasks.withType(Copy).all {
+        duplicatesStrategy 'exclude'
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 
 shadowJar {
     relocate 'org.bstats', 'me.fredthedoggy.restpapi'
+    relocate 'com.sparkjava', 'me.fredthedoggy.restpapi'
 }
 
 repositories {
@@ -23,10 +37,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.10.9'
-    compileOnly 'com.sparkjava:spark-core:2.9.3'
-    compileOnly 'org.bstats:bstats-bukkit:2.2.1'
+    compileOnly 'org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT'
+    compileOnly 'me.clip:placeholderapi:2.11.5'
+    compileOnly 'org.bstats:bstats-bukkit:3.0.2'
+    implementation 'com.sparkjava:spark-core:2.9.4'
     implementation 'com.heretere.hdl:hdl-spigot:1.5.1'
 }
 processResources {
